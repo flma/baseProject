@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mfl.mapper.UserMapper">
+	<resultMap type="com.mfl.common.entity.User" id="UserMap">
+		<id column="id" property="id" />
+		<result column="account" property="account" />
+	</resultMap>
+	<select id="findById" resultMap="UserMap" parameterType="long">
+		select id,account from users
+		where id=#{id}
+	</select>
+    <insert id="insert" parameterType="com.mfl.common.entity.User" useGeneratedKeys="true" keyProperty="id" >
+        insert into users(account) values(#{account})
+    </insert>
+</mapper>
