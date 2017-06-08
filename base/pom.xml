@@ -20,6 +20,8 @@
 		<dubbo.version>2.5.3</dubbo.version>
 		<javassist.version>3.18.1-GA</javassist.version>
 		<zkclient.version>0.1</zkclient.version>
+		<jline.version>2.14.3</jline.version>
+		<zookeeper.version>3.3.3</zookeeper.version>
 	</properties>
 
 	<dependencies>
@@ -108,13 +110,13 @@
 		<dependency>
 			<groupId>jline</groupId>
 			<artifactId>jline</artifactId>
-			<version>2.14.3</version>
+			<version>${jline.version}</version>
 		</dependency>
-		<!-- <dependency>
+		 <dependency>
 			<groupId>org.apache.zookeeper</groupId>
 			<artifactId>zookeeper</artifactId>
-			<version>3.3.3</version>
-		</dependency> -->
+			<version>${zookeeper.version}</version>
+		</dependency> 
 		<dependency>
 			<groupId>com.github.sgroschupf</groupId>
 			<artifactId>zkclient</artifactId>
