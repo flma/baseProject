@@ -1,5 +1,6 @@
 package service;
 
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ public class ConfigTest {
 
     @Test
     public void testFindById() {
+        Logger logger = org.apache.log4j.Logger.getLogger(ConfigTest.class);
+        logger.info("fdsfafdf");
+        
         User user = userService.findById(1);
         System.out.println(user.getAccount());
     }
