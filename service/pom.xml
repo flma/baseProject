@@ -3,10 +3,25 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.mfl</groupId>
-		<artifactId>base</artifactId>
+		<artifactId>serviceParent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>../base/pom.xml</relativePath>
+		<relativePath>../serviceParent/pom.xml</relativePath>
 	</parent>
 	<artifactId>service</artifactId>
 	<packaging>jar</packaging>
+	
+	<!-- <dependencies>
+	aop
+	 <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.8.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.8.5</version>
+        </dependency>
+	</dependencies> -->
 </project>
