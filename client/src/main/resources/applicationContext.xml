@@ -9,4 +9,35 @@
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd 
         http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 	<context:property-placeholder location="classpath:*.properties" />
+	<context:component-scan base-package="com.mfl.shiro" />
+	<!-- 集成redis -->
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<!-- 最大连接数 -->
+		<property name="maxTotal" value="${jedis.pool.maxTotal}" />
+		<!-- 最大空闲连接数 -->
+		<property name="maxIdle" value="${jedis.pool.maxIdle}" />
+		<!-- 最大等待时间 -->
+		<property name="maxWaitMillis" value="${jedis.pool.maxWaitMillis}" />
+		<!-- 在获取连接的时候检查有效性 -->
+		<property name="testOnBorrow" value="${jedis.pool.testOnBorrow}" />
+		<!-- 在return给pool时，是否提前进行validate操作 -->
+		<property name="testOnReturn" value="${jedis.pool.testOnReturn}" />
+	</bean>
+	<bean id="redisConnectionFactory"
+		class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+		<property name="hostName" value="${redis.host}" />
+		<property name="port" value="${redis.port}" />
+		<property name="password" value="${redis.password}" />
+		<property name="timeout" value="${redis.timeOut}" />
+	</bean>
+	<bean id="stringRedisSerializer"
+		class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+	<bean id="redisCache" class="org.springframework.data.redis.core.RedisTemplate">
+		<property name="connectionFactory" ref="redisConnectionFactory" />
+		<property name="keySerializer" ref="stringRedisSerializer" />
+		<property name="valueSerializer" ref="stringRedisSerializer" />
+		<property name="hashKeySerializer" ref="stringRedisSerializer" />
+		<property name="hashValueSerializer" ref="stringRedisSerializer" />
+	</bean>
+	<!-- end -->
 </beans>

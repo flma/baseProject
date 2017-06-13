@@ -13,21 +13,4 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../base/pom.xml</relativePath>
 	</parent>
-	<properties>
-		<jedis.version>2.5.1</jedis.version>
-		<data.redis.version>1.5.1.RELEASE</data.redis.version>
-	</properties>
-	<dependencies>
-		<!-- Jedis -->
-		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-			<version>${jedis.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-redis</artifactId>
-			<version>${data.redis.version}</version>
-		</dependency>
-	</dependencies>
 </project>

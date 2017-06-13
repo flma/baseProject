@@ -2,7 +2,6 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.mfl</groupId>
 	<artifactId>clientParent</artifactId>
 	<packaging>pom</packaging>
 	<name>clientParent</name>
@@ -15,6 +14,7 @@
 	</parent>
 	<properties>
 		<jackson.version>2.8.8</jackson.version>
+		<shiro.version>1.2.3</shiro.version>
 	</properties>
 	<dependencies>
 		<!-- Spring mvc -->
@@ -28,5 +28,21 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
+		<!-- shiro -->
+		 <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+            <version>${shiro.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-web</artifactId>
+            <version>${shiro.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
+            <version>${shiro.version}</version>
+        </dependency>
 	</dependencies>
 </project>
