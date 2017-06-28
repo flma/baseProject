@@ -30,7 +30,7 @@
 		<property name="password" value="${redis.password}" />
 		<property name="timeout" value="${redis.timeOut}" />
 	</bean>
-	<bean id="stringRedisSerializer"
+	<!-- <bean id="stringRedisSerializer"
 		class="org.springframework.data.redis.serializer.StringRedisSerializer" />
 	<bean id="redisCache" class="org.springframework.data.redis.core.RedisTemplate">
 		<property name="connectionFactory" ref="redisConnectionFactory" />
@@ -38,6 +38,8 @@
 		<property name="valueSerializer" ref="stringRedisSerializer" />
 		<property name="hashKeySerializer" ref="stringRedisSerializer" />
 		<property name="hashValueSerializer" ref="stringRedisSerializer" />
-	</bean>
+	</bean> -->
+	
+	<bean id="redisService" class="com.mfl.common.util.RedisService"></bean>
 	<!-- end -->
 </beans>

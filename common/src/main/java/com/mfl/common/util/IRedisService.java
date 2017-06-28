@@ -82,6 +82,28 @@ public interface IRedisService {
     void delete(List<String> key);
 
     /**
+     * 更新redis数据
+     * 
+     * @author mafl@youwinedu.com
+     * @date 2017年6月20日 上午10:49:36
+     * @param key
+     * @param obj
+     * @return
+     */
+    <T> boolean update(String key, T obj);
+
+    /**
+     * 更新redis数据
+     * 
+     * @author mafl@youwinedu.com
+     * @date 2017年6月20日 上午10:49:56
+     * @param key
+     * @param value
+     * @return
+     */
+    boolean update(String key, String value);
+
+    /**
      * 保存，存在则更新，不存在则创建
      * 
      * @author mafengli

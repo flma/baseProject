@@ -5,7 +5,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -15,10 +14,10 @@ import org.apache.shiro.session.mgt.eis.AbstractSessionDAO;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.util.SerializationUtils;
 
 import com.mfl.common.util.Constants;
+import com.mfl.common.util.IRedisService;
 
 import jline.internal.Log;
 
@@ -27,7 +26,7 @@ public class RedisSessionDao extends AbstractSessionDAO {
     @Value("${session.expire}")
     private long expire;
     @Autowired
-    private RedisTemplate redisTemplate;
+    private IRedisService redisService;
     private int i = 0;
 
     @Override
@@ -42,7 +41,6 @@ public class RedisSessionDao extends AbstractSessionDAO {
      * @date 2017年6月13日 下午5:25:38
      * @param session
      */
-    @SuppressWarnings("unchecked")
     private void saveSession(Session session) {
         if (session == null || session.getId() == null) {
             Log.error("session or session id is null");
@@ -50,19 +48,20 @@ public class RedisSessionDao extends AbstractSessionDAO {
         }
         session.setTimeout(expire);
         long timeOut = expire / 1000;
-        ValueOperations vo = redisTemplate.opsForValue();
         //保存用户会话
-        vo.set(this.getKey(Constants.Redis.SHIRO_REDIS_SESSION_PRE, session.getId().toString()),
-                session, timeOut, TimeUnit.SECONDS);
+        redisService.add(
+                this.getKey(Constants.Redis.SHIRO_REDIS_SESSION_PRE, session.getId().toString()),
+                timeOut, SerializationUtils.serialize(session));
         String uid = getUserId(session);
         if (StringUtils.isNotBlank(uid)) {
             try {
                 //保存会话对应的UID
-                vo.set(this.getKey(Constants.Redis.SHIRO_SESSION_PRE, session.getId().toString()),
-                        uid.getBytes("UTF-8"), timeOut);
+                redisService.add(
+                        this.getKey(Constants.Redis.SHIRO_SESSION_PRE, session.getId().toString()),
+                        timeOut, uid.getBytes("UTF-8"));
                 //保存在线UID
-                vo.set(this.getKey(Constants.Redis.UID_PRE, uid),
-                        ("online" + (i++) + "").getBytes("UTF-8"), timeOut);
+                redisService.add(this.getKey(Constants.Redis.UID_PRE, uid), timeOut,
+                        ("online" + (i++) + "").getBytes("UTF-8"));
             }
             catch (UnsupportedEncodingException e) {
                 // TODO: handle exception
@@ -94,30 +93,30 @@ public class RedisSessionDao extends AbstractSessionDAO {
             return;
         }
         //删除用户会话
-        redisTemplate.delete(
+        redisService.delete(
                 this.getKey(Constants.Redis.SHIRO_REDIS_SESSION_PRE, session.getId().toString()));
         //获取缓存的用户会话对应的uid
-        String uid = (String) redisTemplate.opsForValue()
+        String uid = redisService
                 .get(this.getKey(Constants.Redis.SHIRO_SESSION_PRE, session.getId().toString()));
         //删除用户会话sessionid对应的uid
-        redisTemplate
+        redisService
                 .delete(this.getKey(Constants.Redis.SHIRO_SESSION_PRE, session.getId().toString()));
         //删除在线uid
-        redisTemplate.delete(this.getKey(Constants.Redis.UID_PRE, uid));
+        redisService.delete(this.getKey(Constants.Redis.UID_PRE, uid));
         //删除用户缓存的角色
-        redisTemplate.delete(this.getKey(Constants.Redis.ROLE_PRE, uid));
+        redisService.delete(this.getKey(Constants.Redis.ROLE_PRE, uid));
         //删除用户缓存的权限
-        redisTemplate.delete(this.getKey(Constants.Redis.PERMISSION_PRE, uid));
+        redisService.delete(this.getKey(Constants.Redis.PERMISSION_PRE, uid));
     }
 
     @Override
     public Collection<Session> getActiveSessions() {
         // TODO Auto-generated method stub
         Set<Session> sessions = new HashSet<>();
-        Set<String> keys = redisTemplate.keys(Constants.Redis.SHIRO_REDIS_SESSION_PRE + "*");
+        Set<String> keys = redisService.keys(Constants.Redis.SHIRO_REDIS_SESSION_PRE + "*");
         if (keys != null && keys.size() > 0) {
             for (String key : keys) {
-                Session s = (Session) redisTemplate.opsForValue().get(key);
+                Session s = (Session)SerializationUtils.deserialize(redisService.getByte(key));
                 sessions.add(s);
             }
         }
@@ -142,8 +141,8 @@ public class RedisSessionDao extends AbstractSessionDAO {
         }
         logger.debug("Read Redis.SessionId=" + new String(
                 getKey(Constants.Redis.SHIRO_REDIS_SESSION_PRE, sessionId.toString())));
-        Session session = (Session) redisTemplate.opsForValue()
-                .get(getKey(Constants.Redis.SHIRO_SESSION_PRE, sessionId.toString()));
+        Session session = (Session) SerializationUtils.deserialize(redisService
+                .getByte(getKey(Constants.Redis.SHIRO_SESSION_PRE, sessionId.toString())));
         return session;
     }
 
@@ -154,7 +153,7 @@ public class RedisSessionDao extends AbstractSessionDAO {
      * @return
      */
     public boolean isOnLine(String uid) {
-        Set<String> keys = redisTemplate.keys(Constants.Redis.UID_PRE + uid);
+        Set<String> keys = redisService.keys(Constants.Redis.UID_PRE + uid);
         if (keys != null && keys.size() > 0) {
             return true;
         }
